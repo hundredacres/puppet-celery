@@ -51,6 +51,10 @@ class celery (
   $create_user            = false,
   $queues                 = 'default',
   $workers                = 'celery',
+  $celery_opts            = undef,
+  $backend                = 'redis://localhost',
+  $broker                 = 'ampq://guest@localhost//',
+  $broker_api             = 'http://guest:guest@localhost:15672/api/',
   Integer[0] $time_limit  = 300,
   Integer[0] $concurrency = 8,
   $flower                 = false,
@@ -58,7 +62,7 @@ class celery (
   $envfile                = '/etc/celery/celery.conf',
   $celery_version         = '3.1.19',
   $flower_version         = latest,
-  $redis_support          = true,
+  $redis_support          = true
 ) {
 
   $runfile = "${app_dir}/${app}.py"

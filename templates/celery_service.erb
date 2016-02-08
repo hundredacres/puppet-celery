@@ -1,6 +1,8 @@
 [Unit]
 Description=Celery workers
 After=network.target
+Wants=flower.service
+Before=flower.service
 
 [Service]
 Type=forking
@@ -21,3 +23,6 @@ ExecReload=/bin/sh -c "${CELERY_BIN} multi restart $CELERYD_NODES \
 
 [Install]
 WantedBy=multi-user.target
+
+[X-Fleet]
+X-Conflicts=flower@*.service

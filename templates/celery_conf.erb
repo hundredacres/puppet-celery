@@ -3,14 +3,19 @@
 
 CELERY_APP="<%= @app %>"
 CELERYD_CHDIR="<%= @app_dir %>"
-CELERYD_NODES="<%= @nodes %>"
-CELERYD_OPTS="--time-limit=<%= @time_limit %> --concurrency=<%= @concurrency %>"
+CELERYD_NODES="<%= @workers %>"
+CELERYD_OPTS="--time-limit=<%= @time_limit %> --concurrency=<%= @concurrency %><% if @celery_opts -%> <%= @celery_opts %><% end -%>"
 CELERY_BIN="/usr/bin/python2 -m celery"
 CELERYD_PID_FILE="/var/run/celery/%n.pid"
 CELERYD_LOG_FILE="/var/log/celery/%n%I.log"
 CELERYD_LOG_LEVEL="<%= @log_level %>"
 CELERYD_USER="<%= @user %>"
 CELERYD_GROUP="<%= @group %>"
+BROKER_URL="<%= @broker %>"
+BROKER_API="<%= @broker_api %>"
+<% if @backend -%>
+CELERY_RESULT_BACKEND='<%= @backend %>'
+<% end -%>
 
 d /run/celery 0755 <%= @user %> <%= @group %> -
 d /var/log/celery 0755 <%= @user %> <%= @group %> -
