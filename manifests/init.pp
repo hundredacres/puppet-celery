@@ -45,21 +45,20 @@
 class celery (
   $app,
   $app_dir,
-  $import_py = undef,
-  $user = 'celery',
-  $group = 'celery',
-  $create_user = false,
-  $queues = 'default',
-  $workers = 'celery',
-  Integer[0] $time_limit = 300,
+  $import_py              = undef,
+  $user                   = 'celery',
+  $group                  = 'celery',
+  $create_user            = false,
+  $queues                 = 'default',
+  $workers                = 'celery',
+  Integer[0] $time_limit  = 300,
   Integer[0] $concurrency = 8,
-  $flower = false,
-  $log_level = 'INFO',
-  $envfile = '/etc/celery/celery.conf',
-  $celery_version = '3.1.19',
-  $flower_version = latest,
-  $redis_support = true,
-  $generate_keys = true
+  $flower                 = false,
+  $log_level              = 'INFO',
+  $envfile                = '/etc/celery/celery.conf',
+  $celery_version         = '3.1.19',
+  $flower_version         = latest,
+  $redis_support          = true,
 ) {
 
   $runfile = "${app_dir}/${app}.py"
@@ -100,7 +99,7 @@ class celery (
 
   concat::fragment { "${app}_base":
     target  => $runfile,
-    content => template('celery/tasks_base.erb'),
+    content => template('modules/celery/tasks_base.erb'),
     order   => 0
   }
 
@@ -117,14 +116,17 @@ class celery (
       group  => $group,
       ;
     '/lib/systemd/system/celery.service':
-      content => template('celery/celery_service.erb')
+      content => template('modules/celery/celery_service.erb')
+      ;
+    '/lib/systemd/system/flower.service':
+      content => template('modules/celery/flower_service.erb')
       ;
     '/etc/celery':
       ensure => directory,
       mode   => '0444'
       ;
     $envfile:
-      content => template('celery/celery_conf.erb'),
+      content => template('modules/celery/celery_conf.erb'),
   }
 
   service { 'celery':
