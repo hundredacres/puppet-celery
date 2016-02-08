@@ -21,12 +21,12 @@ tasks to be run by Celery.
 
 ## Setup
 
-### What celery affects **OPTIONAL**
+### What celery affects
 
 This service manages the Celery application and provides a mechanism for running
 Celery as a service.
 
-### Setup Requirements **OPTIONAL**
+### Setup Requirements
 
 You will need a RabbitMQ server to provide a queue for Celery. If you would like to
 store results then you will want to configure a Redis server and specify the backend
