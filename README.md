@@ -14,70 +14,48 @@
 
 ## Description
 
-Start with a one- or two-sentence summary of what the module does and/or what
-problem it solves. This is your 30-second elevator pitch for your module.
-Consider including OS/Puppet version it works with.
+Provide mechanism to deploy Celery workers and tasks.
 
-You can give more descriptive information in a second paragraph. This paragraph
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?" If your module has a range of functionality (installation, configuration,
-management, etc.), this is the time to mention it.
+This module provides the capability to specify Celery workers and queues along with
+tasks to be run by Celery.
 
 ## Setup
 
 ### What celery affects **OPTIONAL**
 
-If it's obvious what your module touches, you can skip this section. For
-example, folks can probably figure out that your mysql_instance module affects
-their MySQL instances.
-
-If there's more that they should know about, though, this is the place to mention:
-
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
+This service manages the Celery application and provides a mechanism for running
+Celery as a service.
 
 ### Setup Requirements **OPTIONAL**
 
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you might want to include an additional "Upgrading" section
-here.
+You will need a RabbitMQ server to provide a queue for Celery. If you would like to
+store results then you will want to configure a Redis server and specify the backend
+to Celery.
 
 ### Beginning with celery
 
-The very basic steps needed for a user to get the module up and running. This
-can include setup steps, if necessary, or it can be an example of the most
-basic use of the module.
+The easiest way to start with Celery is to deploy a all-in-one node. If you look
+in examples you will see an example of deploying Celery along with Redis and RabbitMQ
+on a single node. This is a reasonable way to setup a dev environment or to start using
+Celery. If you plan to deploy multiple workers then it is a good practice to separate
+your queue from any of the workers.
 
 ## Usage
 
-This section is where you describe how to customize, configure, and do the
-fancy stuff with your module here. It's especially helpful if you include usage
-examples and code samples for doing things with your module.
+TODO
 
 ## Reference
 
-Here, include a complete list of your module's classes, types, providers,
-facts, along with the parameters for each. Users refer to this section (thus
-the name "Reference") to find specific details; most users don't read it per
-se.
+TODO
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc. If there
-are Known Issues, you might want to include them under their own heading here.
+This module is designed for use with Debian 8, jessie. Celery works on a wide range
+of platforms. This iteration of the module does not attempt to support this wide range.
+Instead, the scope of this module is to support Celery well on jessie. Pull requests are
+welcome if you would like to add additional OS support.
 
 ## Development
 
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
-
-## Release Notes/Contributors/Etc. **Optional**
-
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You can also add any additional sections you feel
-are necessary or important to include here. Please use the `## ` header.
+Pull requests are welcome. Please feel free to improve this module and add support for
+additional operating systems.
