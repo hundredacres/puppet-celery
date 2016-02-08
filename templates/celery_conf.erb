@@ -1,0 +1,16 @@
+# See
+# http://docs.celeryproject.org/en/latest/tutorials/daemonizing.html#available-options
+
+CELERY_APP="<%= @app %>"
+CELERYD_CHDIR="<%= @app_dir %>"
+CELERYD_NODES="<%= @nodes %>"
+CELERYD_OPTS="--time-limit=<%= @time_limit %> --concurrency=<%= @concurrency %>"
+CELERY_BIN="/usr/bin/python2 -m celery"
+CELERYD_PID_FILE="/var/run/celery/%n.pid"
+CELERYD_LOG_FILE="/var/log/celery/%n%I.log"
+CELERYD_LOG_LEVEL="<%= @log_level %>"
+CELERYD_USER="<%= @user %>"
+CELERYD_GROUP="<%= @group %>"
+
+d /run/celery 0755 <%= @user %> <%= @group %> -
+d /var/log/celery 0755 <%= @user %> <%= @group %> -
