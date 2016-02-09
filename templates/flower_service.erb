@@ -6,7 +6,7 @@ BindsTo=celery.service
 User=<%= @user %>
 Group=<%= @group %>
 EnvironmentFile=<%= @envfile %>
-WorkingDirectory=<%= @appdir %>
+WorkingDirectory=<%= @app_dir %>
 ExecStart=/bin/sh -c "/bin/sleep 5 ; /usr/local/bin/flower -A $CELERY_APP --enable_event --BROKER_URL=${BROKER_URL} --broker_api=${BROKER_API}"
 
 [Install]
