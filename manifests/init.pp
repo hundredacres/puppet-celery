@@ -80,7 +80,7 @@ class celery (
   }
 
   if $redis_support {
-    python::pip { 'redis',
+    python::pip { 'redis':
       ensure => present
     }
   }
