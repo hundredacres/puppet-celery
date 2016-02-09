@@ -68,7 +68,7 @@ class celery (
 
   $runfile = "${app_dir}/${app}.py"
 
-  unless $::lsbdistcodename => 'jessie' {
+  unless $::lsbdistcodename == 'jessie' {
     fail( join(
       'Only Debian jessie is supported for this module at this time,',
       "but you're running ${::lsbdistcodename}", ' ')
