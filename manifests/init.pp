@@ -104,7 +104,7 @@ class celery (
 
   concat::fragment { "${app}_base":
     target  => $runfile,
-    content => template('modules/celery/tasks_base.erb'),
+    content => template('celery/tasks_base.erb'),
     order   => 0
   }
 
@@ -121,17 +121,17 @@ class celery (
       group  => $group,
       ;
     '/lib/systemd/system/celery.service':
-      content => template('modules/celery/celery_service.erb')
+      content => template('celery/celery_service.erb')
       ;
     '/lib/systemd/system/flower.service':
-      content => template('modules/celery/flower_service.erb')
+      content => template('celery/flower_service.erb')
       ;
     '/etc/celery':
       ensure => directory,
       mode   => '0444'
       ;
     $envfile:
-      content => template('modules/celery/celery_conf.erb'),
+      content => template('celery/celery_conf.erb'),
   }
 
   service { 'celery':
