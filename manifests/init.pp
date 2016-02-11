@@ -40,8 +40,8 @@
 # Copyright
 # ---------
 #
-# Copyright 2016 Your name here, unless otherwise noted.
-#
+# Copyright 2016 Puppet Labs, Inc., unless otherwise noted.
+
 class celery (
   $app,
   $app_dir,
@@ -54,7 +54,7 @@ class celery (
   $workers                = 'celery',
   $celery_opts            = undef,
   $backend                = 'redis://localhost',
-  $broker                 = 'ampq://guest@localhost//',
+  $broker                 = 'amqp://guest@localhost//',
   $broker_api             = 'http://guest:guest@localhost:15672/api/',
   Integer[0] $time_limit  = 300,
   Integer[0] $concurrency = 8,
@@ -63,7 +63,8 @@ class celery (
   $envfile                = '/etc/celery/celery.conf',
   $celery_version         = '3.1.19',
   $flower_version         = latest,
-  $redis_support          = true
+  $redis_support          = true,
+  $systemd_service_path   = '/etc/systemd/system'
 ) {
 
   $runfile = "${app_dir}/${app}.py"
@@ -92,20 +93,7 @@ class celery (
   }
 
   if $import_py {
-    $import_n = join($import_py.map |$i| { "import ${i}" }, "\n")
-  }
-
-  concat { $runfile:
-    owner  => $user,
-    group  => $group,
-    mode   => '0444',
-    notify => Service['celery']
-  }
-
-  concat::fragment { "${app}_base":
-    target  => $runfile,
-    content => template('celery/tasks_base.erb'),
-    order   => 0
+    $import_n = join($import_py.map |$i| { "import ${i}\n" }, '')
   }
 
   file {
@@ -113,17 +101,33 @@ class celery (
       ensure => present,
       owner  => 'root',
       group  => 'root',
-      mode   => '0400'
+      mode   => '0644'
       ;
-    "/home/${user}/celeryapp":
+    $app_dir:
       ensure => directory,
       owner  => $user,
       group  => $group,
+      mode   => '0400'
       ;
-    '/lib/systemd/system/celery.service':
+    $runfile:
+      owner   => $user,
+      group   => $group,
+      content => template('celery/tasks_base.erb')
+      ;
+    "${app_dir}/celery_instance.py":
+      owner   => $user,
+      group   => $group,
+      content => template('celery/celery_instance.erb')
+      ;
+    "/home/${user}/run":
+      ensure => directory,
+      owner  => $user,
+      group  => $group
+      ;
+    "${systemd_service_path}/celery.service":
       content => template('celery/celery_service.erb')
       ;
-    '/lib/systemd/system/flower.service':
+    "${systemd_service_path}/flower.service":
       content => template('celery/flower_service.erb')
       ;
     '/etc/celery':
@@ -132,9 +136,12 @@ class celery (
       ;
     $envfile:
       content => template('celery/celery_conf.erb'),
+      mode    => '0400',
   }
 
   service { 'celery':
-    ensure => 'running'
+    ensure => 'running',
+    enable => true,
+    name   => 'celery.service'
   }
 }
