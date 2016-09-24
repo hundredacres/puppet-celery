@@ -69,7 +69,7 @@ class celery (
 
   $runfile = "${app_dir}/${app}.py"
 
-  unless $::lsbdistcodename == 'jessie' {
+  unless $::lsbdistcodename =~ 'jessie|trusty' {
     fail( join(
       'Only Debian jessie is supported for this module at this time,',
       "but you're running ${::lsbdistcodename}", ' ')
@@ -77,18 +77,18 @@ class celery (
   }
 
   python::pip { 'celery':
-    ensure => $celery_version
+    ensure => $celery_version,
   }
 
   if $redis_support {
     python::pip { 'redis':
-      ensure => present
+      ensure => present,
     }
   }
 
   if $flower {
     python::pip { 'flower':
-      ensure => $flower_version
+      ensure => $flower_version,
     }
   }
 
@@ -142,6 +142,6 @@ class celery (
   service { 'celery':
     ensure => 'running',
     enable => true,
-    name   => 'celery.service'
+    name   => 'celery.service',
   }
 }
