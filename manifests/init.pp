@@ -67,6 +67,7 @@ class celery (
   $redis_support          = true,
   $service_path           = $celery::params::service_path,
   $service_config         = $celery::params::service_config,
+  $service_config_source  = undef,
   $service_template       = $celery::params::service_template,
 ) inherits celery::params{
 
@@ -145,7 +146,8 @@ class celery (
       group  => $group
       ;
     "${service_path}/${service_config}":
-      content => template($service_template)
+      content => template($service_template),
+      source  => $service_config_source,
       ;
     "${service_path}/flower.service":
       content => template('celery/flower_service.erb')
