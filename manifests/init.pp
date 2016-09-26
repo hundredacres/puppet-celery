@@ -45,6 +45,7 @@
 class celery (
   $app,
   $app_dir,
+  $app_conf               = undef,
   $import_py              = undef,
   $user                   = 'celery',
   $group                  = 'celery',
@@ -64,8 +65,10 @@ class celery (
   $celery_version         = '3.1.19',
   $flower_version         = latest,
   $redis_support          = true,
-  $systemd_service_path   = '/etc/systemd/system'
-) {
+  $service_path           = $celery::params::service_path,
+  $service_config         = $celery::params::service_config,
+  $service_template       = $celery::params::service_template,
+) inherits celery::params{
 
   $runfile = "${app_dir}/${app}.py"
 
@@ -96,6 +99,33 @@ class celery (
     $import_n = join($import_py.map |$i| { "import ${i}\n" }, '')
   }
 
+  if $app_conf {
+    file { $app_conf:
+      ensure => present,
+      owner  => $user,
+      group  => $group,
+      path   => "${app_dir}/${app_conf}",
+    }
+  } else {
+    file {
+      default:
+        ensure => present,
+        owner  => 'root',
+        group  => 'root',
+        mode   => '0644'
+        ;
+      $runfile:
+        owner   => $user,
+        group   => $group,
+        content => template('celery/tasks_base.erb')
+        ;
+      "${app_dir}/celery_instance.py":
+        owner   => $user,
+        group   => $group,
+        content => template('celery/celery_instance.erb'),
+    }
+  }
+
   file {
     default:
       ensure => present,
@@ -109,25 +139,15 @@ class celery (
       group  => $group,
       mode   => '0400'
       ;
-    $runfile:
-      owner   => $user,
-      group   => $group,
-      content => template('celery/tasks_base.erb')
-      ;
-    "${app_dir}/celery_instance.py":
-      owner   => $user,
-      group   => $group,
-      content => template('celery/celery_instance.erb')
-      ;
     "/home/${user}/run":
       ensure => directory,
       owner  => $user,
       group  => $group
       ;
-    "${systemd_service_path}/celery.service":
-      content => template('celery/celery_service.erb')
+    "${service_path}/${service_config}":
+      content => template($service_template)
       ;
-    "${systemd_service_path}/flower.service":
+    "${service_path}/flower.service":
       content => template('celery/flower_service.erb')
       ;
     '/etc/celery':
